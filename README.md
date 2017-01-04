@@ -1,15 +1,23 @@
 # Castlegate IT WP HTTPS Redirect #
 
-Allows easy redirection to HTTPS when `$_SERVER['HTTPS'] == 'on'` and a constant is set instructing the plugin to do so.
+Allows easy and automatic redirection to HTTPS when activated and the `siteurl` in WordPress' options is configured to a URL with the https scheme.
 
 ## Options ##
 
-To enable HTTPS redirection, simply define the following constant.
+To disable HTTPS redirection, simply define the following constant.
 
 ~~~ php
-define('CGIT_HTTPS_REDIRECT', true);
+define('CGIT_HTTPS_REDIRECT', false);
 ~~~
 
 ## Considerations ##
 
-When the constant is defined and set to `true` any pages accessed over HTTP will be redirected, therefore this constant should typically be defined on an environment specific configuration file to avoid redirecting on environments where HTTPS is not configured.
+Servers with load balancing often ommit the `HTTPS` environment variable, so WordPress cannot accurately determine the website is accessed over a https scheme. This results in infinite loops and incorrect permalinks. 
+
+Load balanced environments will provide the `HTTP_X_FORWARDED_PROTO` environment variable instead, so the following code can be placed in `wp-config.php` to resolve the problem.
+
+~~~ php
+if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+~~~
