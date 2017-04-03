@@ -15,6 +15,7 @@ License: MIT
 if (!isHttps() && optionsUrlIsHttps() && !isBlocked()) {
     header("HTTP/1.1 301 Moved Permanently");
     header('Location: https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+    exit();
 }
 
 /**
@@ -24,7 +25,8 @@ if (!isHttps() && optionsUrlIsHttps() && !isBlocked()) {
  */
 function isHttps()
 {
-    return isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on';
+    return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ||
+        (isset($_SERVER['REQUEST_SCHEME']) && $_SEVER['REQUEST_SCHEME']=='https');
 }
 
 /**
